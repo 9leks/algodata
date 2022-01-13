@@ -8,25 +8,34 @@
 #include <utility>
 
 #include "node.hpp"
+#include "stack.hpp"
 
 template <typename T>
 struct LinkedList {
     Node<T>* head;
     std::size_t size;
 
-    LinkedList() {
-        head = nullptr;
-        size = 0;
-    }
+    LinkedList() : head{nullptr}, size{0} {}
 
-    LinkedList(std::initializer_list<T> vals) : LinkedList() {
-        for (auto val{std::rbegin(vals)}; val != std::rend(vals); val++) {
-            prepend(*val);
+    LinkedList(LinkedList& other) {
+        Stack<T> stack;
+        for (auto curr{other.head}; curr != nullptr; curr = curr->next) {
+            stack.push(curr->val);
+        }
+
+        while (!stack.is_empty()) {
+            prepend(stack.pop());
         }
     }
 
-    LinkedList(LinkedList&& other) : LinkedList() {
+    LinkedList(LinkedList&& other) : LinkedList{} {
         swap(*this, other);
+    }
+
+    LinkedList(std::initializer_list<T> vals) : LinkedList{} {
+        for (auto val{std::rbegin(vals)}; val != std::rend(vals); val++) {
+            prepend(*val);
+        }
     }
 
     ~LinkedList() {
