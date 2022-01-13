@@ -1,0 +1,8 @@
+AllowAllParametersOfDeclarationOnNextLine: False
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: All
+BasedOnStyle: Google
+BinPackArguments: False
+BinPackParameters: False
+ColumnLimit: 120
+IndentWidth: 4
