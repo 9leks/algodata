@@ -8,12 +8,8 @@
 void StackTest() {
     Assert it("Stack tests");
     Stack<int> stack;
-    std::stack<int> stdstack;
 
-    it.beforeEach = [&]() {
-        stack = {};
-        stdstack = {};
-    };
+    it.beforeEach = [&]() { stack = {}; };
 
     it.equals("pushing when empty",
               Fn<std::list<int>>([&] {
@@ -59,7 +55,7 @@ void StackTest() {
               }),
               Fn<int>([] { return 1; }));
 
-    it.equals("popping when size > 1 grows stack",
+    it.equals("popping when size > 1 shrinks stack",
               Fn<std::list<int>>([&] {
                   stack = {1, 2, 3, 4};
                   stack.pop();
@@ -88,7 +84,7 @@ void StackTest() {
                   return std::list{4, 3, 2, 1};
               }));
 
-    it.exits("handles large lists correctly", [&] {
+    it.exits("handles large stacks correctly", [&] {
         for (int i = 0; i < 10'000'000; i++) {
             stack.push(i);
         }
