@@ -9,6 +9,53 @@ void QueueTest() {
 
     it.beforeEach = [&]() { queue = {}; };
 
+    it.exits("copy assignment operator", [] { Queue<int> copy; });
+
+    it.exits("copy constructor", [&] {
+        queue = {1, 2, 3};
+        auto copy = queue;
+
+        if (copy != queue) {
+            it.raise();
+        }
+
+        copy.enqueue(-1);
+
+        if (copy == queue) {
+            it.raise();
+        }
+    });
+
+    it.exits("move constructor", [&] {
+        queue = {1, 2, 3};
+        auto copy = std::move(queue);
+        if (!queue.is_empty()) {
+            it.raise();
+        }
+    });
+
+    it.exits("swapping", [&] {
+        queue = {1, 2, 3};
+        auto other = queue;
+        other.enqueue(-1);
+        std::swap(queue, other);
+
+        if (queue != Queue{1, 2, 3, -1} || queue.size != 4) {
+            it.raise();
+        }
+
+        other.dequeue();
+        if (other != Queue{2, 3} || other.size != 2) {
+            it.raise();
+        }
+    });
+
+    it.exits("handles large lists correctly", [&] {
+        for (int i = 0; i < 10'000'000; i++) {
+            queue.enqueue(i);
+        }
+    });
+
     it.equals("enqueueing when empty",
               Fn<std::list<int>>([&] {
                   queue.enqueue(0);
@@ -81,10 +128,4 @@ void QueueTest() {
               Fn<std::list<int>>([] {
                   return std::list{1, 2, 3, 4};
               }));
-
-    it.exits("handles large queues correctly", [&] {
-        for (int i{0}; i < 10'000'000; i++) {
-            queue.enqueue(i);
-        }
-    });
 }

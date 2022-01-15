@@ -12,13 +12,14 @@
 
 template <typename T>
 struct LinkedList {
-    Node<T>* head;
-    std::size_t size;
+    Node<T>* head{nullptr};
+    std::size_t size{0};
 
-    LinkedList() : head{nullptr}, size{0} {}
+    LinkedList() = default;
 
-    LinkedList(LinkedList& other) {
+    LinkedList(const LinkedList& other) {
         Stack<T> stack;
+
         for (auto curr{other.head}; curr != nullptr; curr = curr->next) {
             stack.push(curr->val);
         }
@@ -28,11 +29,11 @@ struct LinkedList {
         }
     }
 
-    LinkedList(LinkedList&& other) : LinkedList{} {
+    LinkedList(LinkedList&& other) {
         swap(*this, other);
     }
 
-    LinkedList(std::initializer_list<T> vals) : LinkedList{} {
+    LinkedList(std::initializer_list<T> vals) {
         for (auto val{std::rbegin(vals)}; val != std::rend(vals); val++) {
             prepend(*val);
         }
@@ -45,15 +46,33 @@ struct LinkedList {
     }
 
     friend void swap(LinkedList<T>& lhs, LinkedList<T>& rhs) {
-        using std::swap;
-        swap(lhs.size, rhs.size);
-        swap(lhs.head, rhs.head);
+        std::swap(lhs.size, rhs.size);
+        std::swap(lhs.head, rhs.head);
     }
 
     LinkedList<T>& operator=(LinkedList<T> other) {
         using std::swap;
         swap(*this, other);
         return *this;
+    }
+
+    bool operator==(const LinkedList<T> other) const {
+        if (size != other.size) {
+            return false;
+        }
+
+        auto curr1{head};
+        auto curr2{other.head};
+
+        for (unsigned int i{0}; i < size; i++) {
+            if (curr1->val != curr2->val) {
+                return false;
+            }
+            curr1 = curr1->next;
+            curr2 = curr2->next;
+        }
+
+        return true;
     }
 
     void prepend(T const& val) {
@@ -72,6 +91,7 @@ struct LinkedList {
             tail = tail->next;
         }
         tail->next = new Node<T>(val);
+        size++;
     }
 
     void insert(T const& val, unsigned int idx) {
@@ -84,7 +104,7 @@ struct LinkedList {
         }
 
         auto elem{head};
-        for (unsigned int i = 0; i < idx - 1; i++) {
+        for (unsigned int i{0}; i < idx - 1; i++) {
             elem = elem->next;
         }
         auto next{elem->next};

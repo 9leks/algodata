@@ -12,11 +12,11 @@
 
 template <typename T>
 struct Queue {
-    Node<T>* head;
-    Node<T>* tail;
-    std::size_t size;
+    Node<T>* head{nullptr};
+    Node<T>* tail{nullptr};
+    std::size_t size{0};
 
-    Queue() : head{nullptr}, tail{nullptr}, size{0} {}
+    Queue() = default;
 
     Queue(const Queue& other) {
         for (auto curr{other.head}; curr != nullptr; curr = curr->next) {
@@ -24,11 +24,11 @@ struct Queue {
         }
     }
 
-    Queue(Queue&& other) : Queue{} {
+    Queue(Queue&& other) {
         swap(*this, other);
     }
 
-    Queue(std::initializer_list<T> vals) : Queue{} {
+    Queue(std::initializer_list<T> vals) {
         for (auto val : vals) {
             enqueue(val);
         }
@@ -41,16 +41,34 @@ struct Queue {
     }
 
     friend void swap(Queue<T>& lhs, Queue<T>& rhs) {
-        using std::swap;
-        swap(lhs.size, rhs.size);
-        swap(lhs.head, rhs.head);
-        swap(lhs.tail, rhs.tail);
+        std::swap(lhs.size, rhs.size);
+        std::swap(lhs.head, rhs.head);
+        std::swap(lhs.tail, rhs.tail);
     }
 
     Queue<T>& operator=(Queue<T> other) {
         using std::swap;
         swap(*this, other);
         return *this;
+    }
+
+    bool operator==(const Queue<T> other) const {
+        if (size != other.size) {
+            return false;
+        }
+
+        auto curr1{head};
+        auto curr2{other.head};
+
+        for (unsigned int i{0}; i < size; i++) {
+            if (curr1->val != curr2->val) {
+                return false;
+            }
+            curr1 = curr1->next;
+            curr2 = curr2->next;
+        }
+
+        return true;
     }
 
     void enqueue(T const& val) {

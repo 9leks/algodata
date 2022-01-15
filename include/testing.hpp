@@ -52,8 +52,12 @@ struct Assert {
     void exits(std::string const& description, Fn<void> const& fn) const {
         fmt::print("--- {} ---\n", description);
         beforeEach();
-        fmt::print("\ttesting for segfault. this test fails if segfault.\n");
+        fmt::print("\ttesting for segfault or exception.\n");
         fn();
         fmt::print("✅\ttest passed!\n");
+    }
+
+    void raise() {
+        throw std::runtime_error("runtime exception raised in testing");
     }
 };

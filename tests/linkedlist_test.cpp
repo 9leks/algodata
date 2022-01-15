@@ -7,12 +7,56 @@
 void LinkedListTest() {
     Assert it("LinkedList tests");
     LinkedList<int> list;
-    std::list<int> stdlist;
 
-    it.beforeEach = [&]() {
-        list = {};
-        stdlist = {};
-    };
+    it.beforeEach = [&]() { list = {}; };
+
+    it.exits("copy assignment operator", [] { LinkedList<int> copy; });
+
+    it.exits("copy constructor", [&] {
+        list = {1, 2, 3};
+        auto copy = list;
+
+        if (copy != list) {
+            it.raise();
+        }
+
+        copy.prepend(-1);
+
+        if (copy == list) {
+            it.raise();
+        }
+    });
+
+    it.exits("move constructor", [&] {
+        list = {1, 2, 3};
+        auto copy = std::move(list);
+        if (!list.is_empty()) {
+            it.raise();
+        }
+    });
+
+    it.exits("swapping", [&] {
+        list = {1, 2, 3};
+        auto other = list;
+        other.prepend(-1);
+        std::swap(list, other);
+
+        if (list != LinkedList{-1, 1, 2, 3} || list.size != 4) {
+            it.raise();
+        }
+
+        other.append(4);
+
+        if (other != LinkedList{1, 2, 3, 4} || other.size != 4) {
+            it.raise();
+        }
+    });
+
+    it.exits("handles large lists correctly", [&] {
+        for (int i = 0; i < 10'000'000; i++) {
+            list.prepend(i);
+        }
+    });
 
     it.equals("prepending when size = 0",
               Fn<std::list<int>>([&] {
@@ -129,10 +173,4 @@ void LinkedListTest() {
                   return list.get(1);
               }),
               Fn<int>([] { return 2; }));
-
-    it.exits("handles large lists correctly", [&] {
-        for (int i = 0; i < 10'000'000; i++) {
-            list.prepend(i);
-        }
-    });
 }

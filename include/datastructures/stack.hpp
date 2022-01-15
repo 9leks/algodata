@@ -11,10 +11,10 @@
 
 template <typename T>
 struct Stack {
-    Node<T>* head;
-    std::size_t size;
+    Node<T>* head{nullptr};
+    std::size_t size{0};
 
-    Stack() : head{nullptr}, size{0} {}
+    Stack() = default;
 
     Stack(const Stack& other) {
         Stack stack;
@@ -28,11 +28,11 @@ struct Stack {
         }
     }
 
-    Stack(Stack&& other) : Stack{} {
+    Stack(Stack&& other) {
         swap(*this, other);
     }
 
-    Stack(std::initializer_list<T> vals) : Stack{} {
+    Stack(std::initializer_list<T> vals) {
         for (auto val{std::rbegin(vals)}; val != std::rend(vals); val++) {
             push(*val);
         }
@@ -45,15 +45,33 @@ struct Stack {
     }
 
     friend void swap(Stack<T>& lhs, Stack<T>& rhs) {
-        using std::swap;
-        swap(lhs.size, rhs.size);
-        swap(lhs.head, rhs.head);
+        std::swap(lhs.size, rhs.size);
+        std::swap(lhs.head, rhs.head);
     }
 
     Stack<T>& operator=(Stack<T> other) {
         using std::swap;
         swap(*this, other);
         return *this;
+    }
+
+    bool operator==(const Stack<T> other) const {
+        if (size != other.size) {
+            return false;
+        }
+
+        auto curr1{head};
+        auto curr2{other.head};
+
+        for (unsigned int i{0}; i < size; i++) {
+            if (curr1->val != curr2->val) {
+                return false;
+            }
+            curr1 = curr1->next;
+            curr2 = curr2->next;
+        }
+
+        return true;
     }
 
     void push(T const& val) {

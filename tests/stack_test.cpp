@@ -1,6 +1,6 @@
 #include "datastructures/stack.hpp"
 
-#include <stack>
+#include <list>
 
 #include "datastructures/linkedlist.hpp"
 #include "testing.hpp"
@@ -10,6 +10,46 @@ void StackTest() {
     Stack<int> stack;
 
     it.beforeEach = [&]() { stack = {}; };
+
+    it.exits("copy assignment operator", [] { Stack<int> copy; });
+
+    it.exits("copy constructor", [&] {
+        stack = {1, 2, 3};
+        auto copy = stack;
+
+        if (copy != stack) {
+            it.raise();
+        }
+
+        copy.push(-1);
+
+        if (copy == stack) {
+            it.raise();
+        }
+    });
+
+    it.exits("move constructor", [&] {
+        stack = {1, 2, 3};
+        auto copy = std::move(stack);
+        if (!stack.is_empty()) {
+            it.raise();
+        }
+    });
+
+    it.exits("swapping", [&] {
+        stack = {1, 2, 3};
+        auto other = stack;
+        other.push(-1);
+        std::swap(stack, other);
+
+        if (stack != Stack<int>{-1, 1, 2, 3} || stack.size != 4) {
+            it.raise();
+        }
+
+        if (other != Stack<int>{1, 2, 3} || other.size != 3) {
+            it.raise();
+        }
+    });
 
     it.equals("pushing when empty",
               Fn<std::list<int>>([&] {
@@ -72,9 +112,10 @@ void StackTest() {
               }),
               Fn<int>([] { return 1; }));
 
-    it.equals("reverses a linked list",
+    it.equals("reverses a linked stack",
               Fn<std::list<int>>([&] {
                   LinkedList list{1, 2, 3, 4};
+
                   for (auto curr{list.head}; curr != nullptr; curr = curr->next) {
                       stack.push(curr->val);
                   }
@@ -83,10 +124,4 @@ void StackTest() {
               Fn<std::list<int>>([] {
                   return std::list{4, 3, 2, 1};
               }));
-
-    it.exits("handles large stacks correctly", [&] {
-        for (int i = 0; i < 10'000'000; i++) {
-            stack.push(i);
-        }
-    });
 }
