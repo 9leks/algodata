@@ -1,6 +1,6 @@
-#include "datastructures/queue.hpp"
+#include "linkedlists/queue.hpp"
 
-#include "datastructures/linkedlist.hpp"
+#include "linkedlists/linkedlist.hpp"
 #include "testing.hpp"
 
 void QueueTest() {

@@ -1,8 +1,8 @@
-#include "datastructures/stack.hpp"
+#include "linkedlists/stack.hpp"
 
 #include <list>
 
-#include "datastructures/linkedlist.hpp"
+#include "linkedlists/linkedlist.hpp"
 #include "testing.hpp"
 
 void StackTest() {

@@ -3,8 +3,8 @@
 template <typename T>
 struct Node {
     T val;
-    Node<T>* next;
+    Node<T>* next{nullptr};
 
-    explicit Node(T const& val) : val{val}, next{nullptr} {}
+    Node(T const& val) : val{val} {}
     Node(T const& val, Node<T>* const& next) : val{val}, next{next} {}
 };

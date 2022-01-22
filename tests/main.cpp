@@ -1,3 +1,4 @@
+#include "bst_test.cpp"
 #include "linkedlist_test.cpp"
 #include "queue_test.cpp"
 #include "stack_test.cpp"

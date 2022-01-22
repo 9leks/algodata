@@ -14,7 +14,7 @@ using Fn = std::function<T()>;
 struct Assert {
     Fn<void> beforeEach = [] {};
 
-    explicit Assert(std::string const& title) {
+    Assert(std::string const& title) {
         fmt::print("\n=== {} ===\n", title);
     }
 
